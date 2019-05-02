@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block bodycontent %}
+<div id="main">
+    <div id="content">
+        <div>
+            <div class="catalog-item card cardlayout card-lg center">
+                <h3>Add new category</h3>
+                <form id="new-cat-form" method="POST">
+                    <div class="form-group">
+                        <input type="text" name="name" class="form-control" placeholder="Category name"
+                            value="{% if category %}{{ category.name }}{% endif %}" />
+                    </div>
+                    <div class="form-group">
+                        <textarea name="desc" class="form-control" rows="2"
+                            placeholder="Description">{% if category %}{{ category.desc }}{% endif %}</textarea>
+                    </div>
+
+                    <div class="flex-container buttons-row">
+                        {% if category %}
+                        <button type="button" id="delete-btn" class="btn btn-danger mb-2" data-toggle="modal"
+                            data-target="#delete-dialog">Delete</button>
+                        {% endif %}
+                        <i class="flex-filler"></i>
+                        <button type="button" id="cancel-btn" class="btn btn-secondary mb-2">Cancel</button>
+                        <button type="submit" class="btn btn-primary mb-2">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="saved-dialog" tabindex="-1" role="dialog" aria-labelledby="savedDialogLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="savedDialogLabel">Category saved!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span id="saved-dialog-message"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="saved-okay-btn" class="btn btn-primary">Okay</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if category %}
+<div class="modal fade" id="delete-dialog" tabindex="-1" role="dialog" aria-labelledby="deleteDialogLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteDialogLabel">Delete item?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 24px;">{% if category %} {{ category.name }} {% endif %}</p>
+                <div class="alert alert-danger" role="alert">
+                    Items under this category will be moved to Uncategorized category.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+
+                <button type="button" id="confirm-delete-btn" class="btn btn-danger"
+                    data-url="{{ url_for('postDeleteCategory', id=category.id) }}">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="modal fade" id="deleted-dialog" tabindex="-1" role="dialog" aria-labelledby="deletedDialogLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deletedDialogLabel">Item deleted</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% if category %} {{ category.name }} {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="deleted-okay-btn" class="btn btn-primary">Okay</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+    var savedCategoryData = {};
+
+    $('#cancel-btn').click(function () {
+        window.open('/', '_self');
+    });
+
+    $('#saved-okay-btn').click(function () {
+        document.location.href = '/';
+    });
+
+    $('#deleted-okay-btn').click(function () {
+        document.location.href = '/';
+    });
+
+    var form = $('#new-cat-form');
+    form.submit(function (e) {
+        e.preventDefault();
+        //$('#new-cat-form :input').prop('disabled', true);
+
+        $.ajax({
+            type: 'POST',
+            url: window.location,
+            data: form.serialize(),
+            success: function (data) {
+                $('#saved-dialog-message').text(data.item_data.name);
+                $('#saved-dialog').modal('show');
+            },
+            error: function (data) {
+                //$('#new-cat-form :input').prop('disabled', false);
+            }
+        });
+    });
+
+    $('#confirm-delete-btn').click(function () {
+        var url = this.dataset.url;
+        $('#delete-dialog :input').prop('disabled', true);
+        setTimeout(function () {
+            $.ajax({
+                type: 'POST',
+                url: url,
+                success: function (data) {
+                    $('#delete-dialog').modal('hide');
+                    $('#deleted-dialog').modal('show');
+                },
+                error: function (data) {
+                }
+            });
+        }, 1000);
+
+    });
+</script>
+{% endblock %}

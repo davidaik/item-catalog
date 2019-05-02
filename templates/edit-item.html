@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block bodycontent %}
+<div id="main">
+    <div id="content">
+        <div>
+            <div class="catalog-item card cardlayout card-lg center">
+                <h3>
+                    {% if item %}
+                    Edit item
+                    {% else %}
+                    Add new item
+                    {% endif %}
+                </h3>
+                <form id="new-item-form" method="POST">
+                    <input name="item-id" value="{% if item %}{{ item.id }}{% endif %}" hidden />
+                    <div class="form-group">
+                        <input type="text" name="name" class="form-control" placeholder="Item name"
+                            value="{% if item %}{{ item.name }}{% endif %}" />
+                    </div>
+                    <div class="form-group">
+                        <textarea name="desc" class="form-control" rows="5" placeholder="Description">{% if item %}{{ item.desc }}{% endif %}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <select name="cat-id" class="form-control">
+                            <option {% if not item %}selected{% endif %} disabled>Category</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" {% if item and item.category_id == category.id %}selected{% endif %}>{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="flex-container buttons-row">
+                        <i class="flex-filler"></i>
+                        <button type="button" id="cancel-btn" class="btn btn-secondary mb-2" data-cancel-url="{% if item %}{{ url_for('getItemPage', id=item.id) }}{% endif %}">Cancel</button>
+                        <button type="submit" class="btn btn-primary mb-2">{% if item %}Save changes{% else %}Add{% endif %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="saved-dialog" tabindex="-1" role="dialog" aria-labelledby="deletedDialogLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deletedDialogLabel">Item saved!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span id="saved-dialog-message"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="saved-okay-btn" class="btn btn-primary">Okay</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    var redirectUrlOnSave = "/";
+    var savedItemData = {};
+    $('#cancel-btn').click(function () {
+        if(this.dataset.cancelUrl) {
+            document.location.href = this.dataset.cancelUrl;
+        } else {
+            document.location.href = '/';
+        }
+    });
+
+    $('#saved-okay-btn').click(function() {
+        document.location.href = redirectUrlOnSave;
+    });
+
+    var form = $('#new-item-form');
+    form.submit(function (e) {
+        e.preventDefault();
+        var formData = form.serialize();
+        $('#new-item-form :input').prop('disabled', true);
+        $.ajax({
+            type: 'POST',
+            url: window.location,
+            data: formData,
+            success: function (data) {
+                redirectUrlOnSave = data.redirect_url;
+                $('#saved-dialog-message').text(data.item_data.name);
+                $('#saved-dialog').modal('show');
+            },
+            error: function (data) {
+                $('#new-item-form :input').prop('disabled', false);
+            }
+        });
+
+    });
+
+    $('#saved-dialog').on('hidden.bs.modal', function (e) {
+        document.location.href = redirectUrlOnSave;
+    });
+</script>
+{% endblock %}

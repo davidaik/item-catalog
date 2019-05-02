@@ -1,0 +1,97 @@
+{% extends "base-with-right.html" %}
+{% block content %}
+<div class="catalog-item catalog-item-single card cardlayout">
+    <h3>{{ item.name }}</h3>
+    <p class="desc">{{ item.desc }}</p>
+
+    <div class="flex-container buttons-row">
+        <button type="button" id="edit-btn" class="btn btn-link"
+            data-url="{{ url_for('getEditItemPage', id = item.id) }}">Edit</button>
+        <button type="button" class="btn btn-link" data-toggle="modal" data-target="#delete-dialog">
+            Delete
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div id="recent-items">
+
+</div>
+{% endblock %}
+
+{% block bodycontent_after %}
+<!-- Modal -->
+<div class="modal fade" id="delete-dialog" tabindex="-1" role="dialog" aria-labelledby="deleteDialogLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteDialogLabel">Delete item?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {{ item.name }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" id="confirm-delete-btn" class="btn btn-danger"
+                    data-url="{{ url_for('postDeleteItem', id=item.id) }}">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleted-dialog" tabindex="-1" role="dialog" aria-labelledby="deletedDialogLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deletedDialogLabel">Item deleted</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {{ item.name }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="deleted-okay-btn" class="btn btn-primary">Okay</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $('#edit-btn').click(function () {
+        window.open(this.dataset.url, '_self');
+    });
+
+    $('#deleted-okay-btn').click(function () {
+        window.open('/', '_self');
+    });
+
+    $('#confirm-delete-btn').click(function () {
+        var url = this.dataset.url;
+        $('#delete-dialog :input').prop('disabled', true);
+        setTimeout(function () {
+            $.ajax({
+                type: 'POST',
+                url: url,
+                success: function (data) {
+                    $('#delete-dialog').modal('hide');
+                    $('#deleted-dialog').modal('show');
+                },
+                error: function (data) {
+                }
+            });
+        }, 1000);
+
+    });
+</script>
+{% endblock %}
