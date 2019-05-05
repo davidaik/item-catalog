@@ -5,7 +5,10 @@
     {% for item in items %}
     <div class="catalog-item card cardlayout">
         <h3><a href="{{ url_for('get_item_page', id = item.id) }}">{{ item.name }}</a></h3>
-        <p class="item-info">{{ item.nice_date }} <span class="item-info-separator">|</span> David Heisnam</p>
+        <p class="item-info">
+            {{ item.nice_date }}
+            <span class="item-info-separator">|</span>
+            by {% if item.user %}{{item.user.name}}{% else %}Unknown user{% endif %}</p>
         <p class="desc">{{ item.short_desc }}</p>
     </div>
     {% endfor %}

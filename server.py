@@ -57,19 +57,19 @@ def get_edit_category_page(id=0):
             # id is specified, render edit category page
             category = db_utils.get_category(id)
             return render_template(
-                        'edit-category.html',
-                        category=category,
-                        CLIENT_ID=CLIENT_ID,
-                        signed_in=auth.is_signed_in(),
-                        picture=login_session.get('picture')
-                    )
+                'edit-category.html',
+                category=category,
+                CLIENT_ID=CLIENT_ID,
+                signed_in=auth.is_signed_in(),
+                picture=login_session.get('picture')
+            )
         else:
             return render_template(
-                        'edit-category.html',
-                        CLIENT_ID=CLIENT_ID,
-                        signed_in=auth.is_signed_in(),
-                        picture=login_session.get('picture')
-                    )
+                'edit-category.html',
+                CLIENT_ID=CLIENT_ID,
+                signed_in=auth.is_signed_in(),
+                picture=login_session.get('picture')
+            )
     elif request.method == 'POST':
         # This is meant to be reached from AJAX request.
         # We return a JSON response that will be used by
@@ -109,28 +109,38 @@ def get_edit_item_page(id=0):
 
     if request.method == 'GET':
         if not auth.is_signed_in():
+            # Redirect to login page.
+            # The url to which we are redirected will contain a paramenter
+            # which will be the url to redirect back to
+            # after logging in
             redirect_parameter = None
             if id and id != 0:
                 redirect_parameter = 'redirect={}'.format(
-                url_for('edit_item', id=id))
+                    url_for('edit_item', id=id))
             else:
                 redirect_parameter = 'redirect={}'.format(url_for('new_item'))
-            url = '{path}?{parameter}'.format(path=url_for(
-            'get_login_page'), parameter=redirect_parameter)
-            return redirect(url, 302)
-        categories = db_utils.get_categories()
-        item = None
+                url = '{path}?{parameter}'.format(
+                    path=url_for('get_login_page'),
+                    parameter=redirect_parameter
+                )
+                return redirect(url, 302)
+        categories=db_utils.get_categories()
+        item=None
         if id and id != 0:
-            item = db_utils.get_item(id)
+            item=db_utils.get_item(id)
             if item is None:
                 return render_template('404.html')
+            else:
+                if item.user_id != auth.get_user_id():
+                    # Cannot edit item that does not belong to user
+                    return render_template('unauthorized.html')
         return render_template(
             'edit-item.html',
-            item=item,
-            categories=categories,
-            CLIENT_ID=CLIENT_ID,
-            signed_in=auth.is_signed_in(),
-            picture=login_session.get('picture')
+            item = item,
+            categories = categories,
+            CLIENT_ID = CLIENT_ID,
+            signed_in = auth.is_signed_in(),
+            picture = login_session.get('picture')
         )
     elif request.method == 'POST':
         # This is meant to be reached from AJAX request.
@@ -141,9 +151,9 @@ def get_edit_item_page(id=0):
 
         if id and id != 0:
             if request.form['name'] and request.form['desc'] and request.form['cat-id']:
-                item = db_utils.update_item(
+                item=db_utils.update_item(
                     request.form['item-id'], request.form['name'], request.form['desc'], request.form['cat-id'])
-                itemData = {'id': item.id, 'name': item.name, 'desc': item.desc,
+                itemData={'id': item.id, 'name': item.name, 'desc': item.desc,
                             'short_desc': item.short_desc, 'category_id': item.category_id}
                 return response.success(url_for('get_item_page', id=itemData['id']), itemData)
             else:
@@ -151,11 +161,11 @@ def get_edit_item_page(id=0):
         else:
             if request.form['name'] and request.form['desc'] and request.form['cat-id']:
                 item = db_utils.add_item(
-                            request.form['name'],
-                            request.form['desc'],
-                            request.form['cat-id'],
-                            auth.get_user_id()
-                        )
+                    request.form['name'],
+                    request.form['desc'],
+                    request.form['cat-id'],
+                    auth.get_user_id()
+                )
                 itemData = {'id': item.id, 'name': item.name, 'desc': item.desc,
                             'short_desc': item.short_desc, 'category_id': item.category_id}
                 return response.success(url_for('get_item_page', id=itemData['id']), itemData)

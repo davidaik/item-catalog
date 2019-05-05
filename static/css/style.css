@@ -406,8 +406,8 @@ a {
 }
 
 .catalog-item {
-    flex-grow: 1;
     width: 48%;
+    margin-bottom: 32px;
 }
 
 .catalog-item:nth-of-type(even) {
@@ -416,10 +416,6 @@ a {
 
 .catalog-item-single {
     width: 100%;
-}
-
-.item-grid .catalog-item:nth-last-child(1):nth-child(odd) {
-    margin-left: 1%;
 }
 
 .item-info {
