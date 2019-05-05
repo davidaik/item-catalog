@@ -34,6 +34,7 @@
                 <a id="sign-in-btn" class="dropdown-item" href="/login">Sign in</a>
                 {% endif %}
                 {% if signed_in %}
+                <p id="user-name" class="dropdown-item">{{ user_name }}</p>
                 <a id="sign-out-btn" class="dropdown-item" href="">Sign out</a>
                 {% endif %}
             </div>

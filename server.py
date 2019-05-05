@@ -41,7 +41,8 @@ def get_index(categoryId=0):
         CLIENT_ID=CLIENT_ID,
         signed_in=signed_in,
         is_user_admin=is_user_admin,
-        picture=login_session.get('picture'),
+        user_name=auth.get_user_name(),
+        picture=auth.get_user_picture(),
         SIGNIN_REQUEST_TOKEN=auth.get_signin_request_token()
     )
 

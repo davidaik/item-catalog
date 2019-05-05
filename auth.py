@@ -19,6 +19,11 @@ def is_signed_in():
 def get_user_id():
     return login_session.get('user_id')
 
+def get_user_name():
+    return login_session.get('name')
+
+def get_user_picture():
+    return login_session.get('picture')
     
 def is_user_admin(email):
     if not email:
