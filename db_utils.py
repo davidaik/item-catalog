@@ -33,7 +33,7 @@ def get_user(user_id):
     return session.query(User).filter_by(user_id=user_id).first()
 
 def add_user(user_id, email, name):
-    user = getUser(user_id)
+    user = get_user(user_id)
     if user is not None:
         raise Exception('User already exists')
     user = User(user_id=user_id, email=email, name=name)
@@ -65,7 +65,7 @@ def get_category(id):
     return session.query(Category).filter_by(id=id).one()
 
 def delete_category(id):
-    category = getCategory(id)
+    category = get_category(id)
     session.delete(category)
     session.commit()
 
@@ -76,13 +76,16 @@ def get_items(categoryId):
     return session.query(Item).filter_by(category_id=categoryId).order_by(desc(Item.created_at)).all()
 
 def get_item(id):
-    return session.query(Item).filter_by(id=id).one()
+    return session.query(Item).filter_by(id=id).first()
 
-def add_item(name, desc, cat_id):
+def add_item(name, desc, cat_id, user_id):
     category = session.query(Category).filter_by(id=cat_id).one()
+    user = get_user(user_id)
     if not category:
         raise Exception('CATEGORY_NOT_EXIST')
-    item = Item(name=name, desc=desc, short_desc=desc, category=category)
+    if not user:
+        raise Exception('USER_NOT_EXIST')
+    item = Item(name=name, desc=desc, short_desc=desc, category=category, user=user)
     session.add(item)
     session.flush()
     session.commit()

@@ -118,10 +118,12 @@ def get_edit_item_page(id=0):
             url = '{path}?{parameter}'.format(path=url_for(
             'get_login_page'), parameter=redirect_parameter)
             return redirect(url, 302)
-        item = None
         categories = db_utils.get_categories()
+        item = None
         if id and id != 0:
             item = db_utils.get_item(id)
+            if item is None:
+                return render_template('404.html')
         return render_template(
             'edit-item.html',
             item=item,
@@ -149,7 +151,11 @@ def get_edit_item_page(id=0):
         else:
             if request.form['name'] and request.form['desc'] and request.form['cat-id']:
                 item = db_utils.add_item(
-                    request.form['name'], request.form['desc'], request.form['cat-id'])
+                            request.form['name'],
+                            request.form['desc'],
+                            request.form['cat-id'],
+                            auth.get_user_id()
+                        )
                 itemData = {'id': item.id, 'name': item.name, 'desc': item.desc,
                             'short_desc': item.short_desc, 'category_id': item.category_id}
                 return response.success(url_for('get_item_page', id=itemData['id']), itemData)
@@ -161,6 +167,8 @@ def get_edit_item_page(id=0):
 def get_item_page(id):
     categories = db_utils.get_categories()
     item = db_utils.get_item(id)
+    if item is None:
+        return render_template('404.html')
     signed_in = auth.is_signed_in()
     is_user_admin = False
     if signed_in:

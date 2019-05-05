@@ -23,9 +23,9 @@ class Role(Base):
 
 
 class User(Base):
-    __tablename__ = 'user'
+    __tablename__ = 'app_user'
     id = Column(Integer, primary_key=True)
-    user_id = Column(String(250), nullable=False)
+    user_id = Column(String(250), nullable=False, unique=True)
     email = Column(String(250), nullable=False)
     name = Column(String(250), nullable=False)
 
@@ -48,6 +48,8 @@ class Item(Base):
     updated_at = Column(DateTime, onupdate=get_time)
     category = relationship('Category', backref='item')
     category_id = Column(Integer, ForeignKey('category.id'), nullable=True)
+    user = relationship('User', backref='item')
+    user_id = Column(String(250), ForeignKey('app_user.user_id'), nullable=True)
     nice_date = ""
 
 

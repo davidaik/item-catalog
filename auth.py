@@ -16,6 +16,10 @@ def get_signin_request_token():
 def is_signed_in():
     return login_session.get('user_id') is not None
 
+def get_user_id():
+    return login_session.get('user_id')
+
+    
 def is_user_admin(email):
     if not email:
         return False
