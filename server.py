@@ -30,12 +30,17 @@ def get_index(categoryId=0):
     for item in items:
         item.nice_date = '{month} {day}, {year}'.format(
             month=calendar.month_name[item.created_at.month], day=item.created_at.day, year=item.created_at.year)
+    signed_in = auth.is_signed_in()
+    is_user_admin = False
+    if signed_in:
+        is_user_admin=auth.is_user_admin(login_session.get('email'))
     return render_template(
         'index.html',
         categories=categories,
         items=items,
         CLIENT_ID=CLIENT_ID,
-        signed_in=auth.is_signed_in(),
+        signed_in=signed_in,
+        is_user_admin=is_user_admin,
         picture=login_session.get('picture'),
         SIGNIN_REQUEST_TOKEN=auth.get_signin_request_token()
     )
@@ -44,6 +49,10 @@ def get_index(categoryId=0):
 @app.route('/category/new', methods=['GET', 'POST'])
 @app.route('/category/<int:id>/edit', methods=['GET', 'POST'])
 def get_edit_category_page(id=0):
+    if not auth.is_user_admin(login_session.get('email')):
+        # Only admins can add and edit catories
+        return render_template('unauthorized.html')
+
     if request.method == 'GET':
         if id and id != 0:
             # id is specified, render edit category page
@@ -59,13 +68,13 @@ def get_edit_category_page(id=0):
                     id, request.form['name'], request.form['desc'])
                 categoryData = {'id': category.id,
                                 'name': category.name, 'desc': category.desc}
-                return response.success(url_for('getIndex'), categoryData)
+                return response.success(url_for('get_index'), categoryData)
             else:
                 category = db_utils.add_category(
                     request.form['name'], request.form['desc'])
                 categoryData = {'id': category.id,
                                 'name': category.name, 'desc': category.desc}
-                return response.success(url_for('getIndex'), categoryData)
+                return response.success(url_for('get_index'), categoryData)
 
 
 @app.route('/delete/category/<int:id>', methods=['POST'])
@@ -78,7 +87,7 @@ def post_delete_category(id):
 @app.route('/item/<int:id>/edit', methods=['GET', 'POST'])
 def get_edit_item_page(id=0):
     if not auth.is_signed_in():
-        return redirect(url_for('showLogin'))
+        return redirect(url_for('get_login_page'))
 
     if request.method == 'GET':
         item = None
@@ -100,7 +109,7 @@ def get_edit_item_page(id=0):
                     request.form['item-id'], request.form['name'], request.form['desc'], request.form['cat-id'])
                 itemData={'id': item.id, 'name': item.name, 'desc': item.desc,
                             'short_desc': item.short_desc, 'category_id': item.category_id}
-                return response.success(url_for('getItemPage', id=itemData['id']), itemData)
+                return response.success(url_for('get_item_page', id=itemData['id']), itemData)
             else:
                 return "ERROR"
         else:
@@ -109,7 +118,7 @@ def get_edit_item_page(id=0):
                     request.form['name'], request.form['desc'], request.form['cat-id'])
                 itemData={'id': item.id, 'name': item.name, 'desc': item.desc,
                             'short_desc': item.short_desc, 'category_id': item.category_id}
-                return response.success(url_for('getItemPage', id=itemData['id']), itemData)
+                return response.success(url_for('get_item_page', id=itemData['id']), itemData)
             else:
                 return "ERROR"
 
