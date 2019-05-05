@@ -56,9 +56,20 @@ def get_edit_category_page(id=0):
         if id and id != 0:
             # id is specified, render edit category page
             category = db_utils.get_category(id)
-            return render_template('edit-category.html', category=category)
+            return render_template(
+                        'edit-category.html',
+                        category=category,
+                        CLIENT_ID=CLIENT_ID,
+                        signed_in=auth.is_signed_in(),
+                        picture=login_session.get('picture')
+                    )
         else:
-            return render_template('edit-category.html')
+            return render_template(
+                        'edit-category.html',
+                        CLIENT_ID=CLIENT_ID,
+                        signed_in=auth.is_signed_in(),
+                        picture=login_session.get('picture')
+                    )
     elif request.method == 'POST':
         # This is meant to be reached from AJAX request.
         # We return a JSON response that will be used by
