@@ -49,7 +49,7 @@ def promptAndAddNewAdmin():
     if email in admins_list:
         print('Admin {} already exists!'.format(email))
     else:
-        db_api.addAdmin(email)
+        db_api.add_admin(email)
         print('Admin added!')
 
 
@@ -63,7 +63,7 @@ def promptRemoveOrAddAdmin():
         try:
             user_input = int(user_input)
             if user_input in admins_index:
-                db_api.removeAdmin(admins_index[user_input])
+                db_api.remove_admin(admins_index[user_input])
                 print('Admin {} removed!'.format(admins_index[user_input]))
             else:
                 print('Incorrect input. Try again.')
@@ -74,7 +74,7 @@ def promptRemoveOrAddAdmin():
 
 
 if __name__ == '__main__':
-    admins = db_api.getAdmins()
+    admins = db_api.get_admins()
     prepareAdminsIndex(admins)
 
     try:

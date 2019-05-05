@@ -24,9 +24,9 @@ CLIENT_ID = '692318378170-ufp0veeknbkbbu24er6h2g3n11c4govm.apps.googleuserconten
 
 @app.route('/')
 @app.route('/category/<int:categoryId>')
-def getIndex(categoryId=0):
-    categories = db_utils.getCategories()
-    items = db_utils.getItems(categoryId)
+def get_index(categoryId=0):
+    categories = db_utils.get_categories()
+    items = db_utils.get_items(categoryId)
     for item in items:
         item.nice_date = '{month} {day}, {year}'.format(
             month=calendar.month_name[item.created_at.month], day=item.created_at.day, year=item.created_at.year)
@@ -43,11 +43,11 @@ def getIndex(categoryId=0):
 
 @app.route('/category/new', methods=['GET', 'POST'])
 @app.route('/category/<int:id>/edit', methods=['GET', 'POST'])
-def getEditCategoryPage(id=0):
+def get_edit_category_page(id=0):
     if request.method == 'GET':
         if id and id != 0:
             # id is specified, render edit category page
-            category = db_utils.getCategory(id)
+            category = db_utils.get_category(id)
             return render_template('edit-category.html', category=category)
         else:
             return render_template('edit-category.html')
@@ -55,13 +55,13 @@ def getEditCategoryPage(id=0):
         if request.form['name'] and request.form['desc']:
             if id and id != 0:
                 # id is specified, update existing category
-                category = db_utils.updateCategory(
+                category = db_utils.update_category(
                     id, request.form['name'], request.form['desc'])
                 categoryData = {'id': category.id,
                                 'name': category.name, 'desc': category.desc}
                 return response.success(url_for('getIndex'), categoryData)
             else:
-                category = db_utils.addCategory(
+                category = db_utils.add_category(
                     request.form['name'], request.form['desc'])
                 categoryData = {'id': category.id,
                                 'name': category.name, 'desc': category.desc}
@@ -69,22 +69,22 @@ def getEditCategoryPage(id=0):
 
 
 @app.route('/delete/category/<int:id>', methods=['POST'])
-def postDeleteCategory(id):
-    db_utils.deleteCategory(id)
+def post_delete_category(id):
+    db_utils.delete_category(id)
     return response.success()
 
 
 @app.route('/item/new', methods=['GET', 'POST'])
 @app.route('/item/<int:id>/edit', methods=['GET', 'POST'])
-def getEditItemPage(id=0):
+def get_edit_item_page(id=0):
     if not auth.is_signed_in():
         return redirect(url_for('showLogin'))
 
     if request.method == 'GET':
         item = None
-        categories = db_utils.getCategories()
+        categories = db_utils.get_categories()
         if id and id != 0:
-            item = db_utils.getItem(id)
+            item = db_utils.get_item(id)
         return render_template(
                 'edit-item.html',
                 item=item,
@@ -96,7 +96,7 @@ def getEditItemPage(id=0):
     elif request.method == 'POST':
         if id and id != 0:
             if request.form['name'] and request.form['desc'] and request.form['cat-id']:
-                item=db_utils.updateItem(
+                item=db_utils.update_item(
                     request.form['item-id'], request.form['name'], request.form['desc'], request.form['cat-id'])
                 itemData={'id': item.id, 'name': item.name, 'desc': item.desc,
                             'short_desc': item.short_desc, 'category_id': item.category_id}
@@ -105,7 +105,7 @@ def getEditItemPage(id=0):
                 return "ERROR"
         else:
             if request.form['name'] and request.form['desc'] and request.form['cat-id']:
-                item=db_utils.addItem(
+                item=db_utils.add_item(
                     request.form['name'], request.form['desc'], request.form['cat-id'])
                 itemData={'id': item.id, 'name': item.name, 'desc': item.desc,
                             'short_desc': item.short_desc, 'category_id': item.category_id}
@@ -115,26 +115,26 @@ def getEditItemPage(id=0):
 
 
 @app.route('/item/<int:id>', methods=['GET'])
-def getItemPage(id):
-    categories=db_utils.getCategories()
-    item=db_utils.getItem(id)
+def get_item_page(id):
+    categories=db_utils.get_categories()
+    item=db_utils.get_item(id)
     return render_template('item.html', id=id, categories=categories, item=item)
 
 
 @app.route('/delete/item/<int:id>', methods=['POST'])
-def postDeleteItem(id):
-    item=db_utils.getItem(id)
-    db_utils.deleteItem(item)
+def post_delete_item(id):
+    item=db_utils.get_item(id)
+    db_utils.delete_item(item)
     return response.success()
 
 
 @app.route('/login')
-def showLogin():
+def get_login_page():
     return render_template('login.html', CLIENT_ID=CLIENT_ID, SIGNIN_REQUEST_TOKEN=auth.get_signin_request_token())
 
 
 @app.route('/signin', methods=['POST'])
-def signIn():
+def do_sign_in():
     signin_request_token=request.form['signin_request_token']
 
     if request.form['signin_request_token'] != login_session['signin_request_token']:
@@ -157,10 +157,6 @@ def signIn():
 
     user_id=idinfo['sub']
 
-    print('user id: {}'.format(user_id))
-    print('email: {}'.format(idinfo['email']))
-    print('name: {}'.format(idinfo['name']))
-
     stored_id_token=login_session.get('id_token')
     stored_user_id=login_session.get('user_id')
     if stored_id_token is not None and stored_user_id == user_id:
@@ -169,20 +165,22 @@ def signIn():
         response.headers['Content-Type']='application/json'
         return response
 
-    user=db_utils.getUser(user_id)
+    user=db_utils.get_user(user_id)
     if user is None:
-        db_utils.addUser(user_id, idinfo['email'], idinfo['name'])
+        db_utils.add_user(user_id, idinfo['email'], idinfo['name'])
         print('added user to database!')
 
     # Store the access token in the session for later use.
     login_session['id_token']=g_id_token
     login_session['user_id']=user_id
+    login_session['name']=idinfo['name']
+    login_session['email']=idinfo['email']
     login_session['picture']=idinfo['picture']
     return ""
 
 
 @app.route('/signout', methods=['POST'])
-def signOut():
+def do_sign_out():
     login_session.clear()
     return ""
 

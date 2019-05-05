@@ -30,7 +30,7 @@
                     </div>
                     <div class="flex-container buttons-row">
                         <i class="flex-filler"></i>
-                        <button type="button" id="cancel-btn" class="btn btn-secondary mb-2" data-cancel-url="{% if item %}{{ url_for('getItemPage', id=item.id) }}{% endif %}">Cancel</button>
+                        <button type="button" id="cancel-btn" class="btn btn-secondary mb-2" data-cancel-url="{% if item %}{{ url_for('get_item_page', id=item.id) }}{% endif %}">Cancel</button>
                         <button type="submit" class="btn btn-primary mb-2">{% if item %}Save changes{% else %}Add{% endif %}</button>
                     </div>
                 </form>

@@ -6,7 +6,7 @@
 
     <div class="flex-container buttons-row">
         <button type="button" id="edit-btn" class="btn btn-link"
-            data-url="{{ url_for('getEditItemPage', id = item.id) }}">Edit</button>
+            data-url="{{ url_for('get_edit_item_page', id = item.id) }}">Edit</button>
         <button type="button" class="btn btn-link" data-toggle="modal" data-target="#delete-dialog">
             Delete
         </button>
@@ -38,7 +38,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 <button type="button" id="confirm-delete-btn" class="btn btn-danger"
-                    data-url="{{ url_for('postDeleteItem', id=item.id) }}">Delete</button>
+                    data-url="{{ url_for('post_delete_item', id=item.id) }}">Delete</button>
             </div>
         </div>
     </div>
