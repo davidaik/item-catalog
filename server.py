@@ -125,10 +125,10 @@ def get_edit_item_page(id=0):
                     parameter=redirect_parameter
                 )
                 return redirect(url, 302)
-        categories=db_utils.get_categories()
-        item=None
+        categories = db_utils.get_categories()
+        item = None
         if id and id != 0:
-            item=db_utils.get_item(id)
+            item = db_utils.get_item(id)
             if item is None:
                 return render_template('404.html')
             else:
@@ -137,11 +137,11 @@ def get_edit_item_page(id=0):
                     return render_template('unauthorized.html')
         return render_template(
             'edit-item.html',
-            item = item,
-            categories = categories,
-            CLIENT_ID = CLIENT_ID,
-            signed_in = auth.is_signed_in(),
-            picture = login_session.get('picture')
+            item=item,
+            categories=categories,
+            CLIENT_ID=CLIENT_ID,
+            signed_in=auth.is_signed_in(),
+            picture=login_session.get('picture')
         )
     elif request.method == 'POST':
         # This is meant to be reached from AJAX request.
@@ -152,9 +152,9 @@ def get_edit_item_page(id=0):
 
         if id and id != 0:
             if request.form['name'] and request.form['desc'] and request.form['cat-id']:
-                item=db_utils.update_item(
+                item = db_utils.update_item(
                     request.form['item-id'], request.form['name'], request.form['desc'], request.form['cat-id'])
-                itemData={'id': item.id, 'name': item.name, 'desc': item.desc,
+                itemData = {'id': item.id, 'name': item.name, 'desc': item.desc,
                             'short_desc': item.short_desc, 'category_id': item.category_id}
                 return response.success(url_for('get_item_page', id=itemData['id']), itemData)
             else:
@@ -180,10 +180,14 @@ def get_item_page(id):
     item = db_utils.get_item(id)
     if item is None:
         return render_template('404.html')
+    item.nice_date = '{month} {day}, {year}'.format(
+        month=calendar.month_name[item.created_at.month], day=item.created_at.day, year=item.created_at.year)
     signed_in = auth.is_signed_in()
     is_user_admin = False
+    is_item_owner = False
     if signed_in:
         is_user_admin = auth.is_user_admin(login_session.get('email'))
+        is_item_owner = item.user_id == auth.get_user_id()
     return render_template(
         'item.html',
         id=id,
@@ -192,6 +196,8 @@ def get_item_page(id):
         CLIENT_ID=CLIENT_ID,
         signed_in=signed_in,
         is_user_admin=is_user_admin,
+        is_item_owner=is_item_owner,
+        user_name=auth.get_user_name(),
         picture=login_session.get('picture'),
         SIGNIN_REQUEST_TOKEN=auth.get_signin_request_token()
     )

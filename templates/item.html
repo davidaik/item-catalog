@@ -2,8 +2,13 @@
 {% block content %}
 <div class="catalog-item catalog-item-single card cardlayout">
     <h3>{{ item.name }}</h3>
+    <p class="item-info">
+        {{ item.nice_date }}
+        <span class="item-info-separator">|</span>
+        by {% if item.user %}{{item.user.name}}{% else %}Unknown user{% endif %}</p>
     <p class="desc">{{ item.desc }}</p>
 
+    {% if signed_in and is_item_owner %}
     <div class="flex-container buttons-row">
         <button type="button" id="edit-btn" class="btn btn-link"
             data-url="{{ url_for('edit_item', id = item.id) }}">Edit</button>
@@ -11,6 +16,7 @@
             Delete
         </button>
     </div>
+    {% endif %}
 </div>
 {% endblock %}
 
@@ -21,6 +27,7 @@
 {% endblock %}
 
 {% block bodycontent_after %}
+{% if signed_in %}
 <!-- Modal -->
 <div class="modal fade" id="delete-dialog" tabindex="-1" role="dialog" aria-labelledby="deleteDialogLabel"
     aria-hidden="true">
@@ -63,11 +70,13 @@
         </div>
     </div>
 </div>
+{% endif %}
 
 {% endblock %}
 
 {% block scripts %}
 <script>
+    // {% if signed_in %}
     $('#edit-btn').click(function () {
         window.open(this.dataset.url, '_self');
     });
@@ -93,5 +102,6 @@
         }, 1000);
 
     });
+    // {% endif %}
 </script>
 {% endblock %}
