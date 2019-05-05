@@ -1,4 +1,7 @@
 #!/system/bin/env python3
+# These functions are meant to be used to create response
+# for AJAX requests such as while saving category or item.
+
 from flask import jsonify
 
 def success(redirect_url='/', item_data={}):

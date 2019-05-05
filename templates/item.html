@@ -6,7 +6,7 @@
 
     <div class="flex-container buttons-row">
         <button type="button" id="edit-btn" class="btn btn-link"
-            data-url="{{ url_for('get_edit_item_page', id = item.id) }}">Edit</button>
+            data-url="{{ url_for('edit_item', id = item.id) }}">Edit</button>
         <button type="button" class="btn btn-link" data-toggle="modal" data-target="#delete-dialog">
             Delete
         </button>

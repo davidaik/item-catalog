@@ -17,5 +17,7 @@ def is_signed_in():
     return login_session.get('user_id') is not None
 
 def is_user_admin(email):
+    if not email:
+        return False
     admin = db_utils.get_admin(email)
     return admin is not None
