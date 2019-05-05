@@ -6,8 +6,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <meta name="google-signin-client_id"
-        content="{{ CLIENT_ID }}">
+    <meta name="google-signin-client_id" content="{{ CLIENT_ID }}">
 </head>
 
 <body>
@@ -20,8 +19,8 @@
 
         <div class="dropdown">
 
-            <a id="profile-img-link" href="" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                aria-expanded="false">
+            <a id="profile-img-link" href="" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
                 <i id="profile-img-default" class="material-icons md-light">person</i>
                 <img id="profile-img" />
             </a>
@@ -54,12 +53,38 @@
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="{{ url_for('static', filename='script/script.js') }}"></script>
     <script>
+        // {% if signed_in %}
+        var haveSession = true;
+        // {% else %}
+        var haveSession = false;
+        // {% endif %}
         function onSignIn(googleUser) {
             var profile = googleUser.getBasicProfile();
-            console.log('Name: ' + profile.getName());
-            console.log('Image URL: ' + profile.getImageUrl());
             $('#profile-img').attr('src', profile.getImageUrl());
-            $('#profile-img-default').css({'display': 'none'});
+            $('#profile-img-default').css({ 'display': 'none' });
+
+            // {% if not signed_in %}
+            if (!haveSession) {
+                console.log('Session expired. Creating session');
+                /*
+                Our web client is already signed in with Google,
+                but there is no login session on our server.
+                Create a session.
+                */
+                var id_token = googleUser.getAuthResponse().id_token;
+
+                // Send id token to server and verify it.
+                $.ajax({
+                    type: 'POST',
+                    url: '/signin',
+                    processData: true,
+                    content: 'application/octet-stream; charser=utf-8',
+                    data: { id_token: id_token, signin_request_token: '{{ SIGNIN_REQUEST_TOKEN }}' },
+                    success: function (result) {
+                    }
+                });
+            }
+            // {% endif %}
         }
         // {% if signed_in %}
         $('#sign-out-btn').click(function (e) {

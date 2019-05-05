@@ -29,7 +29,8 @@ def getIndex(categoryId=0):
     for item in items:
         item.nice_date = '{month} {day}, {year}'.format(
             month=calendar.month_name[item.created_at.month], day=item.created_at.day, year=item.created_at.year)
-    return render_template('index.html', categories=categories, items=items, CLIENT_ID=CLIENT_ID, signed_in=auth.is_signed_in())
+    signin_request_token = auth.get_signin_request_token()
+    return render_template('index.html', categories=categories, items=items, CLIENT_ID=CLIENT_ID, signed_in=auth.is_signed_in(), SIGNIN_REQUEST_TOKEN=signin_request_token)
 
 
 @app.route('/category/new', methods=['GET', 'POST'])
@@ -118,19 +119,7 @@ def postDeleteItem(id):
 
 @app.route('/login')
 def showLogin():
-    signin_request_token = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                    for x in range(32))
-    login_session['signin_request_token'] = signin_request_token
-    return render_template('login.html', CLIENT_ID=CLIENT_ID, SIGNIN_REQUEST_TOKEN=login_session['signin_request_token'])
-
-def makeToken():
-    signin_request_token = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                    for x in range(32))
-    login_session['signin_request_token'] = signin_request_token
-    return login_session['signin_request_token']
-
-def isLoggedIn():
-    return 'userid' in login_session
+    return render_template('login.html', CLIENT_ID=CLIENT_ID, SIGNIN_REQUEST_TOKEN=auth.get_signin_request_token())
 
 
 @app.route('/signin', methods=['POST'])
