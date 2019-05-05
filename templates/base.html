@@ -6,18 +6,42 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+    <meta name="google-signin-client_id"
+        content="{{ CLIENT_ID }}">
 </head>
 
 <body>
+
     <div id="header">
         <h1 id="logo"><a class="interactive-bg" href="/">Catalog</a></h1>
         <i class="flex-filler"></i>
-        <a id="new-item-btn" href="{{ url_for('getEditItemPage') }}">New item</a>
-        <a id="login-btn" href="">Login</a>
+        <a id="new-item-btn" class="btn-style" href="{{ url_for('getEditItemPage') }}">New item</a>
+
+
+        <div class="dropdown">
+
+            <a id="profile-img-link" href="" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false">
+                <i id="profile-img-default" class="material-icons md-light">person</i>
+                <img id="profile-img" />
+            </a>
+
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                {% if not signed_in %}
+                <a id="sign-in-btn" class="dropdown-item" href="/login">Sign in</a>
+                {% endif %}
+                {% if signed_in %}
+                <a id="sign-out-btn" class="dropdown-item" href="">Sign out</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
 
     {% block bodycontent %}{% endblock %}
+
+    <!-- Google signin button must be present for the signin api to work properly.
+        We have hidden it because we don't need it. -->
+    <div style="display: none" id="sign-in-btn" class="g-signin2" data-onsuccess="onSignIn"></div>
 
     <script src="https://code.jquery.com/jquery-3.4.0.min.js"
         integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
@@ -27,8 +51,35 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="{{ url_for('static', filename='script/script.js') }}"></script>
+    <script>
+        function onSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile();
+            console.log('Name: ' + profile.getName());
+            console.log('Image URL: ' + profile.getImageUrl());
+            $('#profile-img').attr('src', profile.getImageUrl());
+            $('#profile-img-default').css({'display': 'none'});
+        }
+        // {% if signed_in %}
+        $('#sign-out-btn').click(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '/signout',
+                content: 'application/json',
+                success: function (result) {
+                    var auth2 = gapi.auth2.getAuthInstance();
+                    auth2.signOut().then(function () {
+                        console.log('User signed out.');
+                        document.location.href = "/";
+                    });
+                }
+            });
+        });
+        // {% endif %}
 
+    </script>
     {% block scripts %}{% endblock %}
 </body>
 

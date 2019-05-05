@@ -2,7 +2,7 @@
 
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
-from db_init import DATABASE_NAME, Base, Role, Category, Item
+from db_init import DATABASE_NAME, Base, Role, User, Category, Item
 
 import datetime
 
@@ -26,6 +26,16 @@ def removeAdmin(email):
 def getAdmins():
     return session.query(Role).all()
 
+def getUser(user_id):
+    return session.query(User).filter_by(user_id=user_id).first()
+
+def addUser(user_id, email, name):
+    user = getUser(user_id)
+    if user is not None:
+        raise Exception('User already exists')
+    user = User(user_id=user_id, email=email, name=name)
+    session.add(user)
+    session.commit()
 
 # Categories
 

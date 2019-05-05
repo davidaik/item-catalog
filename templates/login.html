@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>MANGO</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <meta name="google-signin-client_id"
+        content="{{ CLIENT_ID }}">
+
+    <style>
+        #login-form {
+            width: 400px;
+            padding: 16px 32px 32px;
+            margin: 0 auto;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div id="header">
+        <h1 id="logo"><a class="interactive-bg" href="/">Catalog</a></h1>
+    </div>
+
+    <div id="main">
+        <div id="content">
+            <div id="login-form" class="card card-layout">
+                <h3>Sign in</h3>
+                <p>You need to sign in with your Google acocunt to create and edit items.</p>
+                <div>
+                    <div id="sign-in-btn" class="g-signin2" data-onsuccess="onSignIn"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.4.0.min.js"
+        integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <script src="https://apis.google.com/js/platform.js?onload=initAuth" async defer></script>
+    <script src="{{ url_for('static', filename='script/script.js') }}"></script>
+    <script>
+        function onSignIn(googleUser) {
+            var id_token = googleUser.getAuthResponse().id_token;
+
+            // Send id token to server and verify it.
+            $.ajax({
+                type: 'POST',
+                url: '/signin',
+                processData: true,
+                content: 'application/octet-stream; charser=utf-8',
+                data: { id_token: id_token, signin_request_token: '{{ SIGNIN_REQUEST_TOKEN }}' },
+                success: function (result) {
+                    document.location.href = "/"
+                }
+            });
+        }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

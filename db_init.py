@@ -10,24 +10,24 @@ Base = declarative_base()
 
 DATABASE_NAME = 'database'
 
+
 def get_time():
     return datetime.datetime.now()
 
 
 class Role(Base):
     __tablename__ = 'role'
+    id = Column(Integer, primary_key=True)
+    email = Column(String(250), nullable=False)
+    role = Column(String(20), nullable=False)
 
-    id = Column(
-        Integer, primary_key=True
-    )
 
-    email = Column(
-        String(250), nullable=False
-    )
-
-    role = Column(
-        String(20), nullable=False
-    )
+class User(Base):
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String(250), nullable=False)
+    email = Column(String(250), nullable=False)
+    name = Column(String(250), nullable=False)
 
 
 class Category(Base):
@@ -36,6 +36,7 @@ class Category(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
     desc = Column(String(250), nullable=False)
+
 
 class Item(Base):
     __tablename__ = 'item'
@@ -48,7 +49,6 @@ class Item(Base):
     category = relationship('Category', backref='item')
     category_id = Column(Integer, ForeignKey('category.id'), nullable=True)
     nice_date = ""
-
 
 
 engine = create_engine(
