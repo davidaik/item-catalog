@@ -1,7 +1,7 @@
 #!/system/bin/env python3
 import re
 
-import db_api
+import db_utils
 
 
 # Like { 1: 'myemail@gmail.com'}, for letting the user
