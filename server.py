@@ -83,11 +83,19 @@ def post_delete_category(id):
     return response.success()
 
 
-@app.route('/item/new', methods=['GET', 'POST'])
-@app.route('/item/<int:id>/edit', methods=['GET', 'POST'])
+@app.route('/item/new', methods=['GET', 'POST'], endpoint='new_item')
+@app.route('/item/<int:id>/edit', methods=['GET', 'POST'], endpoint='edit_item')
 def get_edit_item_page(id=0):
     if not auth.is_signed_in():
-        return redirect(url_for('get_login_page'))
+        redirect_parameter = None
+        if id and id != 0:
+            redirect_parameter = 'redirect={}'.format(url_for('edit_item', id=id))
+        else:
+            redirect_parameter = 'redirect={}'.format(url_for('new_item'))
+
+        url = '{path}?{parameter}'.format(path=url_for('get_login_page'), parameter=redirect_parameter)
+
+        return redirect(url, 302)
 
     if request.method == 'GET':
         item = None

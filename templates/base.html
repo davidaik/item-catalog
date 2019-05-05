@@ -14,18 +14,18 @@
     <div id="header">
         <h1 id="logo"><a class="interactive-bg" href="/">Catalog</a></h1>
         <i class="flex-filler"></i>
-        <a id="new-item-btn" href="{{ url_for('get_edit_item_page') }}"><i class="material-icons md-dark">add</i> <span>New
+        <a id="new-item-btn" href="{{ url_for('new_item') }}"><i class="material-icons md-dark">add</i> <span>New
                 item</span></a>
 
 
         <div class="dropdown">
 
-            <a id="profile-img-link" href="" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
+            <a id="profile-img-link" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false" class="{% if picture %}has-profile-img{% endif %}">
                 {% if picture %}
                 <img id="profile-img" src="{{ picture }}" />
                 {% else %}
-                <i id="profile-img-default" class="material-icons md-light">person</i>
+                <i id="profile-img-default" class="material-icons md-dark">person</i>
                 {% endif %}
             </a>
 

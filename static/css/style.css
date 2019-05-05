@@ -285,6 +285,12 @@ a {
     height: 32px;
     margin-right: 16px;
     position: relative;
+    background: #fff;
+    border-radius: 16px;
+}
+
+#profile-img-link.has-profile-img {
+    background: none;
 }
 
 #profile-img-link i {

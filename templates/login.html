@@ -50,6 +50,8 @@
     <script src="https://apis.google.com/js/platform.js?onload=initAuth" async defer></script>
     <script src="{{ url_for('static', filename='script/script.js') }}"></script>
     <script>
+        var redirect = new URL(window.location).searchParams.get('redirect');
+        if(!!!redirect) redirect = '/';
         function onSignIn(googleUser) {
             var id_token = googleUser.getAuthResponse().id_token;
 
@@ -61,7 +63,7 @@
                 content: 'application/octet-stream; charser=utf-8',
                 data: { id_token: id_token, signin_request_token: '{{ SIGNIN_REQUEST_TOKEN }}' },
                 success: function (result) {
-                    document.location.href = "/"
+                    document.location.href = redirect
                 }
             });
         }
