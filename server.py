@@ -19,7 +19,8 @@ import auth
 
 app = Flask(__name__)
 
-CLIENT_ID = 'YOUR GOOGLE SIGNIN API CLIENT ID HERE'
+CLIENT_ID = '692318378170-ufp0veeknbkbbu24er6h2g3n11c4govm.apps.googleusercontent.com'
+
 
 @app.route('/')
 @app.route('/category/<int:categoryId>')
@@ -29,8 +30,15 @@ def getIndex(categoryId=0):
     for item in items:
         item.nice_date = '{month} {day}, {year}'.format(
             month=calendar.month_name[item.created_at.month], day=item.created_at.day, year=item.created_at.year)
-    signin_request_token = auth.get_signin_request_token()
-    return render_template('index.html', categories=categories, items=items, CLIENT_ID=CLIENT_ID, signed_in=auth.is_signed_in(), SIGNIN_REQUEST_TOKEN=signin_request_token)
+    return render_template(
+        'index.html',
+        categories=categories,
+        items=items,
+        CLIENT_ID=CLIENT_ID,
+        signed_in=auth.is_signed_in(),
+        picture=login_session.get('picture'),
+        SIGNIN_REQUEST_TOKEN=auth.get_signin_request_token()
+    )
 
 
 @app.route('/category/new', methods=['GET', 'POST'])
@@ -71,32 +79,35 @@ def postDeleteCategory(id):
 def getEditItemPage(id=0):
     if not auth.is_signed_in():
         return redirect(url_for('showLogin'))
-        
+
     if request.method == 'GET':
+        item = None
+        categories = db_utils.getCategories()
         if id and id != 0:
-            # id is specified, render edit item page
             item = db_utils.getItem(id)
-            categories = db_utils.getCategories()
-            return render_template('edit-item.html', item=item, categories=categories)
-        else:
-            # id is not specified, render new item page
-            categories = db_utils.getCategories()
-            return render_template('edit-item.html', categories=categories)
+        return render_template(
+                'edit-item.html',
+                item=item,
+                categories=categories,
+                CLIENT_ID=CLIENT_ID,
+                signed_in=auth.is_signed_in(),
+                picture=login_session.get('picture')
+        )
     elif request.method == 'POST':
         if id and id != 0:
             if request.form['name'] and request.form['desc'] and request.form['cat-id']:
-                item = db_utils.updateItem(
+                item=db_utils.updateItem(
                     request.form['item-id'], request.form['name'], request.form['desc'], request.form['cat-id'])
-                itemData = {'id': item.id, 'name': item.name, 'desc': item.desc,
+                itemData={'id': item.id, 'name': item.name, 'desc': item.desc,
                             'short_desc': item.short_desc, 'category_id': item.category_id}
                 return response.success(url_for('getItemPage', id=itemData['id']), itemData)
             else:
                 return "ERROR"
         else:
             if request.form['name'] and request.form['desc'] and request.form['cat-id']:
-                item = db_utils.addItem(
+                item=db_utils.addItem(
                     request.form['name'], request.form['desc'], request.form['cat-id'])
-                itemData = {'id': item.id, 'name': item.name, 'desc': item.desc,
+                itemData={'id': item.id, 'name': item.name, 'desc': item.desc,
                             'short_desc': item.short_desc, 'category_id': item.category_id}
                 return response.success(url_for('getItemPage', id=itemData['id']), itemData)
             else:
@@ -105,14 +116,14 @@ def getEditItemPage(id=0):
 
 @app.route('/item/<int:id>', methods=['GET'])
 def getItemPage(id):
-    categories = db_utils.getCategories()
-    item = db_utils.getItem(id)
+    categories=db_utils.getCategories()
+    item=db_utils.getItem(id)
     return render_template('item.html', id=id, categories=categories, item=item)
 
 
 @app.route('/delete/item/<int:id>', methods=['POST'])
 def postDeleteItem(id):
-    item = db_utils.getItem(id)
+    item=db_utils.getItem(id)
     db_utils.deleteItem(item)
     return response.success()
 
@@ -124,55 +135,59 @@ def showLogin():
 
 @app.route('/signin', methods=['POST'])
 def signIn():
-    signin_request_token = request.form['signin_request_token']
+    signin_request_token=request.form['signin_request_token']
 
     if request.form['signin_request_token'] != login_session['signin_request_token']:
-        response = make_response(json.dumps('Invalid token.'), 401)
-        response.headers['Content-Type'] = 'application/json'
+        response=make_response(json.dumps('Invalid token.'), 401)
+        response.headers['Content-Type']='application/json'
         return response
 
-    g_id_token = request.form['id_token']
+    g_id_token=request.form['id_token']
     try:
-        idinfo = id_token.verify_oauth2_token(g_id_token, requests.Request(), CLIENT_ID)
+        idinfo=id_token.verify_oauth2_token(
+            g_id_token, requests.Request(), CLIENT_ID)
         if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
             raise ValueError('Wrong issuer.')
 
         if idinfo['aud'] != CLIENT_ID:
             raise ValueError('Invalid client id.')
-        
+
     except ValueError:
         pass
 
-    user_id = idinfo['sub']
+    user_id=idinfo['sub']
 
     print('user id: {}'.format(user_id))
     print('email: {}'.format(idinfo['email']))
     print('name: {}'.format(idinfo['name']))
 
-    stored_id_token = login_session.get('id_token')
-    stored_user_id = login_session.get('user_id')
+    stored_id_token=login_session.get('id_token')
+    stored_user_id=login_session.get('user_id')
     if stored_id_token is not None and stored_user_id == user_id:
-        response = make_response(json.dumps('Current user is already connected.'),
+        response=make_response(json.dumps('Current user is already connected.'),
                                  200)
-        response.headers['Content-Type'] = 'application/json'
+        response.headers['Content-Type']='application/json'
         return response
 
-    user = db_utils.getUser(user_id)
+    user=db_utils.getUser(user_id)
     if user is None:
         db_utils.addUser(user_id, idinfo['email'], idinfo['name'])
         print('added user to database!')
 
     # Store the access token in the session for later use.
-    login_session['id_token'] = g_id_token
-    login_session['user_id'] = user_id
+    login_session['id_token']=g_id_token
+    login_session['user_id']=user_id
+    login_session['picture']=idinfo['picture']
     return ""
+
 
 @app.route('/signout', methods=['POST'])
 def signOut():
     login_session.clear()
     return ""
 
+
 if __name__ == '__main__':
-    app.secret_key = 'wQwroWyX"uq<hRC'
-    app.debug = True
+    app.secret_key='wQwroWyX"uq<hRC'
+    app.debug=True
     app.run(host='0.0.0.0', port=8000, threaded=False)
