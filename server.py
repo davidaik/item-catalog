@@ -97,7 +97,7 @@ def post_delete_category(id):
 def get_edit_item_page(id=0):
 
     if request.method == 'GET':
-        '''if not auth.is_signed_in():
+        if not auth.is_signed_in():
             redirect_parameter = None
             if id and id != 0:
                 redirect_parameter = 'redirect={}'.format(
@@ -106,7 +106,7 @@ def get_edit_item_page(id=0):
                 redirect_parameter = 'redirect={}'.format(url_for('new_item'))
             url = '{path}?{parameter}'.format(path=url_for(
             'get_login_page'), parameter=redirect_parameter)
-            return redirect(url, 302)'''
+            return redirect(url, 302)
         item = None
         categories = db_utils.get_categories()
         if id and id != 0:
