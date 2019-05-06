@@ -24,8 +24,11 @@
 {% endblock %}
 
 {% block sidebar %}
-<div id="recent-items">
-
+<div id="recent-items" class="sidebar-card card cardlayout">
+    <h3>Recent items</h3>
+    {% for recent_item in recent_items %}
+    <a href="#" class="sidebar-card-item singleline">{{ recent_item.name }}</a>
+    {% endfor %}
 </div>
 {% endblock %}
 

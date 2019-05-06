@@ -190,6 +190,7 @@ def get_edit_item_page(id=0):
 def get_item_page(id):
     categories = db_utils.get_categories()
     item = db_utils.get_item(id)
+    recent_items = db_utils.get_recent_items(5)
     if item is None:
         return render_template('404.html')
     item.nice_date = '{month} {day}, {year}'.format(
@@ -205,6 +206,7 @@ def get_item_page(id):
         id=id,
         categories=categories,
         item=item,
+        recent_items=recent_items,
         CLIENT_ID=CLIENT_ID,
         signed_in=signed_in,
         is_user_admin=is_user_admin,
