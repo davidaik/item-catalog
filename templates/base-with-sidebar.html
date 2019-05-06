@@ -3,18 +3,19 @@
 <div id="main">
     <ul id="categories">
         <h2>Categories</h2>
-        <li><a href="{{ url_for('get_my_items_page') }}">My Items</a></li>
+        <li><a href="{{ url_for('get_my_items_page') }}" class="sidebar-cat-link">My Items</a></li>
 
         {% for category in categories %}
         <li class="cat-item">
-            <a href="{{ url_for('category_page', category_id=category.id) }}">
+            <a href="{{ url_for('category_page', category_id=category.id) }}" class="sidebar-cat-link">
                 {{category.name}}
             </a>
-            <a href="{{ url_for('get_edit_category_page', id=category.id) }}" class="edit-cat-link"><i class="material-icons md-16 md-dark">edit</i></a>
+            <a href="{{ url_for('get_edit_category_page', id=category.id) }}" class="edit-cat-link"><i
+                    class="material-icons md-16 md-light">edit</i></a>
         </li>
         {% endfor %}
         {% if is_user_admin %}
-        <li><a href="{{ url_for('get_edit_category_page') }}">Add category</a></li>
+        <li><a href="{{ url_for('get_edit_category_page') }}" class="sidebar-cat-link bold">+ <span>Add category</span></a></li>
         {% endif %}
     </ul>
     <div id="content">
