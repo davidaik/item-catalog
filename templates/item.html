@@ -10,7 +10,7 @@
     <div class="item-category-row">
         <p>Category: <a href="{{ url_for('category_page', category_id=item.category_id) }}">Cars</a></p>
     </div>
-    {% if signed_in and is_item_owner %}
+    {% if is_user_admin or (signed_in and is_item_owner) %}
     <div class="flex-container buttons-row">
         <i class="flex-filler"></i>
         <button type="button" id="edit-btn" class="btn btn-link"

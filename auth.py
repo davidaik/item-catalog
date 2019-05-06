@@ -25,7 +25,8 @@ def get_user_name():
 def get_user_picture():
     return login_session.get('picture')
     
-def is_user_admin(email):
+def is_user_admin():
+    email = login_session.get('email')
     if not email:
         return False
     admin = db_utils.get_admin(email)

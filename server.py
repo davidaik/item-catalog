@@ -33,7 +33,7 @@ def get_index(category_id=0):
     signed_in = auth.is_signed_in()
     is_user_admin = False
     if signed_in:
-        is_user_admin = auth.is_user_admin(login_session.get('email'))
+        is_user_admin = auth.is_user_admin()
     return render_template(
         'index.html',
         categories=categories,
@@ -51,7 +51,7 @@ def get_index(category_id=0):
 @app.route('/category/<int:id>/edit', methods=['GET', 'POST'])
 def get_edit_category_page(id=0):
     if request.method == 'GET':
-        if not auth.is_user_admin(login_session.get('email')):
+        if not auth.is_user_admin():
             # Only admins can add and edit catories
             return render_template('unauthorized.html')
         if id and id != 0:
@@ -75,7 +75,7 @@ def get_edit_category_page(id=0):
         # This is meant to be reached from AJAX request.
         # We return a JSON response that will be used by
         # The JS code making the request.
-        if not auth.is_user_admin(login_session.get('email')):
+        if not auth.is_user_admin():
             return response.error('Unauthorized')
         if request.form['name'] and request.form['desc']:
             if id and id != 0:
@@ -98,7 +98,7 @@ def post_delete_category(id):
     # This is meant to be reached from AJAX request.
     # We return a JSON response that will be used by
     # The JS code making the request.
-    if not auth.is_user_admin(login_session.get('email')):
+    if not auth.is_user_admin():
         return response.error('Unauthorized')
     db_utils.delete_category(id)
     return response.success()
@@ -132,8 +132,9 @@ def get_edit_item_page(id=0):
             if item is None:
                 return render_template('404.html')
             else:
-                if item.user_id != auth.get_user_id():
+                if (not auth.is_user_admin()) and (item.user_id != auth.get_user_id()):
                     # Cannot edit item that does not belong to user
+                    # But admins are allowed
                     return render_template('unauthorized.html')
         return render_template(
             'edit-item.html',
@@ -151,6 +152,12 @@ def get_edit_item_page(id=0):
             return response.error('Unauthorized')
 
         if id and id != 0:
+            # Update item
+            item = db_utils.get_item(id)
+            if (not auth.is_user_admin()) and (item.user_id != auth.get_user_id()):
+                # Only item owners and admins allowed to update item
+                return response.error('Unauthorized')
+
             if request.form['name'] and request.form['desc'] and request.form['cat-id']:
                 item = db_utils.update_item(
                     request.form['item-id'], request.form['name'], request.form['desc'], request.form['cat-id'])
@@ -160,6 +167,7 @@ def get_edit_item_page(id=0):
             else:
                 return response.error('Failed to save')
         else:
+            # Create new item
             if request.form['name'] and request.form['desc'] and request.form['cat-id']:
                 item = db_utils.add_item(
                     request.form['name'],
@@ -186,7 +194,7 @@ def get_item_page(id):
     is_user_admin = False
     is_item_owner = False
     if signed_in:
-        is_user_admin = auth.is_user_admin(login_session.get('email'))
+        is_user_admin = auth.is_user_admin()
         is_item_owner = item.user_id == auth.get_user_id()
     return render_template(
         'item.html',
@@ -225,7 +233,7 @@ def get_my_items_page():
     signed_in = auth.is_signed_in()
     is_user_admin = False
     if signed_in:
-        is_user_admin = auth.is_user_admin(login_session.get('email'))
+        is_user_admin = auth.is_user_admin()
     return render_template(
         'index.html',
         categories=categories,
