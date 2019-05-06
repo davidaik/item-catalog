@@ -134,7 +134,7 @@ Once you have a client id, you will need to update the `server.py` file to add i
 
 Once everything is set up, we can start the server. But before that, let's add an admin user's email so that we can set up categories for the website. The `addmin.py` is used to manage admin users.
 
-    `python3 addmin.py`
+    python3 addmin.py
     There are currently no admins.
     Enter new admin Gmail address: 
 
@@ -142,7 +142,7 @@ Enter the **Gmail** address of the user who will act as the admin.
 
 Once we have an admin user, we can start the server.
 
-    `python3 server.py`
+    python3 server.py
 
 Once the server is running, we can connect to the home page at http://localhost:8000
 
