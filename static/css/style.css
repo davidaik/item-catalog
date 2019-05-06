@@ -164,7 +164,7 @@ a {
 /* Card */
 
 .card {
-    background: #3d3780;
+    background: #3d3780 !important;
     color: #fff;
     box-shadow: 0 8px 20px 0 rgba(40,37,89,.6);
     border-radius: 8px !important;
@@ -501,6 +501,7 @@ a {
 }
 
 .item-info {
+    margin-bottom: 0;
     font-size: 0.8em;
     color: #fff;
 }
@@ -509,7 +510,7 @@ a {
     display: inline-block;
     padding: 0 8px;
     font-size: 16px;
-    color: #aaa;
+    color: rgba(0, 0, 0, 0.2);
 }
 
 .item-category-row p {
@@ -543,7 +544,7 @@ a {
 a.sidebar-card-item {
     display: block;
     margin: 0 8px;
-    padding: 8px 32px;
+    padding: 16px 32px;
     border-radius: 8px;
     text-decoration: none;
     transition: all 300ms;
