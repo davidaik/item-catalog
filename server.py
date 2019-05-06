@@ -19,6 +19,8 @@ import auth
 
 app = Flask(__name__)
 
+# The Google API client ID below is broken
+# into multiple lines for pep8 compliance
 CLIENT_ID = '{}{}'.format(
                         '692318378170-ufp0veeknbkbbu24er6h2g3n11c4govm',
                         '.apps.googleusercontent.com'
