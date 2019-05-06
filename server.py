@@ -27,6 +27,10 @@ CLIENT_ID = '692318378170-ufp0veeknbkbbu24er6h2g3n11c4govm.apps.googleuserconten
 def get_index(category_id=0):
     categories = db_utils.get_categories()
     items = db_utils.get_items(category_id)
+    page_title = 'Latest Items'
+    if category_id != 0:
+        category = db_utils.get_category(category_id)
+        page_title = category.name
     for item in items:
         item.nice_date = '{month} {day}, {year}'.format(
             month=calendar.month_name[item.created_at.month], day=item.created_at.day, year=item.created_at.year)
@@ -38,6 +42,7 @@ def get_index(category_id=0):
         'index.html',
         categories=categories,
         items=items,
+        page_title=page_title,
         CLIENT_ID=CLIENT_ID,
         signed_in=signed_in,
         is_user_admin=is_user_admin,
