@@ -107,7 +107,12 @@ Once connected, run the following commands.
 Then press CTRL+D and then CTRL+D again, to exit the Postgres console and then log out of the Postgres user.
 
 
+If you have used your own role name, password or database name, you will need to update the following line in your `db_init.py` file.
 
+    'postgresql+psycopg2://catuser:catalog@localhost/catalog'
+
+The syntax for this line is
+    'postgresql+psycopg2://role_name:role_password@localhost/databse_name'
 
 
 
