@@ -14,24 +14,38 @@
                 <form id="new-item-form" method="POST">
                     <input name="item-id" value="{% if item %}{{ item.id }}{% endif %}" hidden />
                     <div class="form-group">
-                        <input type="text" name="name" class="form-control" placeholder="Item name"
-                            value="{% if item %}{{ item.name }}{% endif %}" />
+                        <input id="item-name" type="text" name="name" class="form-control" placeholder="Item name"
+                            value="{% if item %}{{ item.name }}{% endif %}" required />
+                        <div class="invalid-feedback">
+                            Please enter an item name.
+                        </div>
                     </div>
                     <div class="form-group">
-                        <textarea name="desc" class="form-control" rows="5" placeholder="Description">{% if item %}{{ item.desc }}{% endif %}</textarea>
+                        <textarea id="item-desc" name="desc" class="form-control" rows="5" placeholder="Description"
+                            required>{% if item %}{{ item.desc }}{% endif %}</textarea>
+                        <div class="invalid-feedback">
+                            Please enter a short description.
+                        </div>
                     </div>
                     <div class="form-group">
-                        <select name="cat-id" class="form-control">
-                            <option {% if not item %}selected{% endif %} disabled>Category</option>
+                        <select id="item-category" name="cat-id" class="form-control" required>
+                            <option {% if not item %}selected{% endif %} value="" disabled>Category</option>
                             {% for category in categories %}
-                            <option value="{{ category.id }}" {% if item and item.category_id == category.id %}selected{% endif %}>{{ category.name }}</option>
+                            <option value="{{ category.id }}"
+                                {% if item and item.category_id == category.id %}selected{% endif %}>{{ category.name }}
+                            </option>
                             {% endfor %}
                         </select>
+                        <div class="invalid-feedback">
+                            Please select category.
+                        </div>
                     </div>
                     <div class="flex-container buttons-row">
                         <i class="flex-filler"></i>
-                        <button type="button" id="cancel-btn" class="btn btn-secondary mb-2" data-cancel-url="{% if item %}{{ url_for('get_item_page', id=item.id) }}{% endif %}">Cancel</button>
-                        <button type="submit" class="btn btn-primary mb-2">{% if item %}Save changes{% else %}Add{% endif %}</button>
+                        <button type="button" id="cancel-btn" class="btn btn-secondary mb-2"
+                            data-cancel-url="{% if item %}{{ url_for('get_item_page', id=item.id) }}{% endif %}">Cancel</button>
+                        <button id="submit-btn" type="submit" class="btn btn-primary mb-2">{% if item %}Save
+                            changes{% else %}Add{% endif %}</button>
                     </div>
                 </form>
             </div>
@@ -64,28 +78,45 @@
     var redirectUrlOnSave = "/";
     var savedItemData = {};
     $('#cancel-btn').click(function () {
-        if(this.dataset.cancelUrl) {
+        if (this.dataset.cancelUrl) {
             document.location.href = this.dataset.cancelUrl;
         } else {
             document.location.href = '/';
         }
     });
 
-    $('#saved-okay-btn').click(function() {
+    $('#saved-okay-btn').click(function () {
         document.location.href = redirectUrlOnSave;
     });
 
     var form = $('#new-item-form');
+    function validateForm() {
+        if (!$('#item-name').val() || !($('#item-desc').val()) || !($('#item-category').val())) {
+            form.addClass('was-validated');
+            return false;
+        }
+        form.removeClass('was-validated');
+        return true;
+    }
+
+    $('#submit-btn').click(function (e) {
+        e.preventDefault();
+        form.submit();
+    });
+
     form.submit(function (e) {
         e.preventDefault();
+        if (!validateForm()) return;
         var formData = form.serialize();
         $('#new-item-form :input').prop('disabled', true);
+
         $.ajax({
             type: 'POST',
             url: window.location,
             data: formData,
             success: function (data) {
                 redirectUrlOnSave = data.redirect_url;
+                $('#new-item-form :input').prop('disabled', false);
                 $('#saved-dialog-message').text(data.item_data.name);
                 $('#saved-dialog').modal('show');
             },
