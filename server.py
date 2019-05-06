@@ -146,6 +146,7 @@ def get_edit_item_page(id=0):
             categories=categories,
             CLIENT_ID=CLIENT_ID,
             signed_in=auth.is_signed_in(),
+            user_name=auth.get_user_name(),
             picture=login_session.get('picture')
         )
     elif request.method == 'POST':

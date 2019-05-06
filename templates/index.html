@@ -9,11 +9,14 @@
             {{ item.nice_date }}
             <span class="item-info-separator">|</span>
             by <a href="{{ url_for('get_my_items_page', user_id=item.user_id) }}">
-                {% if item.user %}{{item.user.name}}{% else %}Unknown user{% endif %}</p>
+                {% if item.user %}{{item.user.name}}{% else %}Unknown user{% endif %}
             </a>
+        </p>
         <p class="desc">{{ item.short_desc }}</p>
         <div class="item-category-row">
-            <p>Category: <a href="{{ url_for('category_page', category_id=item.category_id) }}">{{ item.category.name }}</a></p>
+            <p>Category: <a
+                    href="{{ url_for('category_page', category_id=item.category_id) }}">{{ item.category.name }}</a>
+            </p>
         </div>
     </div>
     {% endfor %}
