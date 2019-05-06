@@ -231,7 +231,10 @@ def get_my_items_page(user_id=0):
             parameter=redirect_parameter
         )
         return redirect(url, 302)
-
+    page_title = 'My Items'
+    if user_id != 0:
+        user = db_utils.get_user(user_id)
+        page_title = 'Items by {}'.format(user.name)
     categories = db_utils.get_categories()
     items = db_utils.get_user_items(user_id if user_id else auth.get_user_id())
     for item in items:
@@ -243,6 +246,7 @@ def get_my_items_page(user_id=0):
         is_user_admin = auth.is_user_admin()
     return render_template(
         'index.html',
+        page_title=page_title,
         categories=categories,
         items=items,
         CLIENT_ID=CLIENT_ID,
