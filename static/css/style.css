@@ -434,9 +434,14 @@ a {
 
 .item-info-separator {
     display: inline-block;
-    padding: 0 16px;
+    padding: 0 8px;
     font-size: 16px;
     color: #aaa;
+}
+
+.item-category-row p {
+    margin-bottom: 0;
+    font-size: 0.8em;
 }
 
 .item-footer {

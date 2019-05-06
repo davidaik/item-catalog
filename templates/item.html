@@ -7,9 +7,12 @@
         <span class="item-info-separator">|</span>
         by {% if item.user %}{{item.user.name}}{% else %}Unknown user{% endif %}</p>
     <p class="desc">{{ item.desc }}</p>
-
+    <div class="item-category-row">
+        <p>Category: <a href="{{ url_for('category_page', category_id=item.category_id) }}">Cars</a></p>
+    </div>
     {% if signed_in and is_item_owner %}
     <div class="flex-container buttons-row">
+        <i class="flex-filler"></i>
         <button type="button" id="edit-btn" class="btn btn-link"
             data-url="{{ url_for('edit_item', id = item.id) }}">Edit</button>
         <button type="button" class="btn btn-link" data-toggle="modal" data-target="#delete-dialog">

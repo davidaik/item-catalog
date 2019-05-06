@@ -7,7 +7,7 @@
 
         {% for category in categories %}
         <li class="cat-item">
-            <a href="{{ url_for('get_index', categoryId=category.id) }}">
+            <a href="{{ url_for('category_page', category_id=category.id) }}">
                 {{category.name}}
             </a>
             <a href="{{ url_for('get_edit_category_page', id=category.id) }}" class="edit-cat-link"><i class="material-icons md-16 md-dark">edit</i></a>

@@ -23,10 +23,10 @@ CLIENT_ID = '692318378170-ufp0veeknbkbbu24er6h2g3n11c4govm.apps.googleuserconten
 
 
 @app.route('/')
-@app.route('/category/<int:categoryId>')
-def get_index(categoryId=0):
+@app.route('/category/<int:category_id>', endpoint='category_page')
+def get_index(category_id=0):
     categories = db_utils.get_categories()
-    items = db_utils.get_items(categoryId)
+    items = db_utils.get_items(category_id)
     for item in items:
         item.nice_date = '{month} {day}, {year}'.format(
             month=calendar.month_name[item.created_at.month], day=item.created_at.day, year=item.created_at.year)

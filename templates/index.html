@@ -10,6 +10,9 @@
             <span class="item-info-separator">|</span>
             by {% if item.user %}{{item.user.name}}{% else %}Unknown user{% endif %}</p>
         <p class="desc">{{ item.short_desc }}</p>
+        <div class="item-category-row">
+            <p>Category: <a href="{{ url_for('category_page', category_id=item.category_id) }}">Cars</a></p>
+        </div>
     </div>
     {% endfor %}
 </div>
