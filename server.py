@@ -287,12 +287,14 @@ def do_sign_in():
 
     stored_id_token = login_session.get('id_token')
     stored_user_id = login_session.get('user_id')
-    if stored_id_token is not None and stored_user_id == user_id:
-        return response.success()
 
     user = db_utils.get_user(user_id)
     if user is None:
+        # Add user to database if id does not exist.
         db_utils.add_user(user_id, idinfo['email'], idinfo['name'])
+
+    if stored_id_token is not None and stored_user_id == user_id:
+        return response.success()
 
     # Store the access token in the session for later use.
     login_session['id_token'] = g_id_token

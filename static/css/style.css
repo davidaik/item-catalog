@@ -312,6 +312,9 @@ a {
     background: #ccc;
 }
 
+#user-name {
+    font-weight: bold;
+}
 #user-name:hover {
     background: none;
     cursor: default;
