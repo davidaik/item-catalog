@@ -51,7 +51,6 @@ def get_index(category_id=0):
         SIGNIN_REQUEST_TOKEN=auth.get_signin_request_token()
     )
 
-
 @app.route('/category/new', methods=['GET', 'POST'])
 @app.route('/category/<int:id>/edit', methods=['GET', 'POST'])
 def get_edit_category_page(id=0):
@@ -217,8 +216,11 @@ def get_item_page(id):
 
 
 @app.route('/myitems')
-def get_my_items_page():
-    if not auth.is_signed_in():
+@app.route('/user/<string:user_id>')
+def get_my_items_page(user_id=0):
+    if user_id == 0 and not auth.is_signed_in():
+        # This would be reached when /myitems is requested.
+
         # Redirect to login page.
         # The url to which we are redirected will contain a paramenter
         # which will be the url to redirect back to
@@ -231,7 +233,7 @@ def get_my_items_page():
         return redirect(url, 302)
 
     categories = db_utils.get_categories()
-    items = db_utils.get_user_items(auth.get_user_id())
+    items = db_utils.get_user_items(user_id if user_id else auth.get_user_id())
     for item in items:
         item.nice_date = '{month} {day}, {year}'.format(
             month=calendar.month_name[item.created_at.month], day=item.created_at.day, year=item.created_at.year)
