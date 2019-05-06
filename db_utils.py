@@ -18,19 +18,24 @@ def add_admin(email):
     session.add(admin)
     session.commit()
 
+
 def remove_admin(email):
     admin = session.query(Role).filter_by(email=email).one()
     session.delete(admin)
     session.commit()
 
+
 def get_admins():
     return session.query(Role).all()
+
 
 def get_admin(email):
     return session.query(Role).filter_by(email=email, role='admin').first()
 
+
 def get_user(user_id):
     return session.query(User).filter_by(user_id=user_id).first()
+
 
 def add_user(user_id, email, name):
     user = get_user(user_id)
@@ -39,6 +44,7 @@ def add_user(user_id, email, name):
     user = User(user_id=user_id, email=email, name=name)
     session.add(user)
     session.commit()
+
 
 # Categories
 
@@ -49,6 +55,7 @@ def add_category(name, desc):
     session.commit()
     return category
 
+
 def update_category(id, name, desc):
     category = session.query(Category).filter_by(id=id).one()
     category.name = name
@@ -58,31 +65,51 @@ def update_category(id, name, desc):
     session.commit()
     return category
 
+
 def get_categories():
     return session.query(Category).all()
 
+
 def get_category(id):
     return session.query(Category).filter_by(id=id).one()
+
 
 def delete_category(id):
     category = get_category(id)
     session.delete(category)
     session.commit()
 
+
 # Items
 def get_items(categoryId):
     if categoryId == 0:
         return session.query(Item).order_by(desc(Item.created_at)).all()
-    return session.query(Item).filter_by(category_id=categoryId).order_by(desc(Item.created_at)).all()
+    return session.query(
+                        Item
+                        ).filter_by(
+                            category_id=categoryId
+                        ).order_by(
+                            desc(Item.created_at)
+                        ).all()
+
 
 def get_recent_items(count):
     return session.query(Item).order_by(desc(Item.created_at)).limit(5).all()
 
+
 def get_user_items(user_id):
-    return session.query(Item).filter_by(user_id=user_id).order_by(desc(Item.created_at)).all()
+    return session.query(
+                        Item
+                        ).filter_by(
+                            user_id=user_id
+                        ).order_by(
+                            desc(Item.created_at)
+                        ).all()
+
 
 def get_item(id):
     return session.query(Item).filter_by(id=id).first()
+
 
 def add_item(name, desc, cat_id, user_id):
     category = session.query(Category).filter_by(id=cat_id).one()
@@ -91,11 +118,18 @@ def add_item(name, desc, cat_id, user_id):
         raise Exception('CATEGORY_NOT_EXIST')
     if not user:
         raise Exception('USER_NOT_EXIST')
-    item = Item(name=name, desc=desc, short_desc=desc, category=category, user=user)
+    item = Item(
+                name=name,
+                desc=desc,
+                short_desc=desc,
+                category=category,
+                user=user
+            )
     session.add(item)
     session.flush()
     session.commit()
     return item
+
 
 def update_item(id, name, desc, cat_id):
     item = session.query(Item).filter_by(id=id).one()
@@ -113,6 +147,7 @@ def update_item(id, name, desc, cat_id):
     session.flush()
     session.commit()
     return item
+
 
 def delete_item(item):
     session.delete(item)

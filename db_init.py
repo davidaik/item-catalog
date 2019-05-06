@@ -49,7 +49,11 @@ class Item(Base):
     category = relationship('Category', backref='item')
     category_id = Column(Integer, ForeignKey('category.id'), nullable=True)
     user = relationship('User', backref='item')
-    user_id = Column(String(250), ForeignKey('app_user.user_id'), nullable=True)
+    user_id = Column(
+                    String(250),
+                    ForeignKey('app_user.user_id'),
+                    nullable=True)
+
     nice_date = ""
 
 

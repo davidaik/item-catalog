@@ -7,7 +7,7 @@ import db_utils
 import response
 
 from flask import session as login_session
-from flask import make_response
+from flask import jsonify
 import random
 import string
 
@@ -19,7 +19,10 @@ import auth
 
 app = Flask(__name__)
 
-CLIENT_ID = '692318378170-ufp0veeknbkbbu24er6h2g3n11c4govm.apps.googleusercontent.com'
+CLIENT_ID = '{}{}'.format(
+                        '692318378170-ufp0veeknbkbbu24er6h2g3n11c4govm',
+                        '.apps.googleusercontent.com'
+                    )
 
 
 @app.route('/')
@@ -33,7 +36,9 @@ def get_index(category_id=0):
         page_title = category.name
     for item in items:
         item.nice_date = '{month} {day}, {year}'.format(
-            month=calendar.month_name[item.created_at.month], day=item.created_at.day, year=item.created_at.year)
+            month=calendar.month_name[item.created_at.month],
+            day=item.created_at.day,
+            year=item.created_at.year)
     signed_in = auth.is_signed_in()
     is_user_admin = False
     if signed_in:
@@ -50,6 +55,7 @@ def get_index(category_id=0):
         picture=auth.get_user_picture(),
         SIGNIN_REQUEST_TOKEN=auth.get_signin_request_token()
     )
+
 
 @app.route('/category/new', methods=['GET', 'POST'])
 @app.route('/category/<int:id>/edit', methods=['GET', 'POST'])
@@ -108,8 +114,15 @@ def post_delete_category(id):
     return response.success()
 
 
-@app.route('/item/new', methods=['GET', 'POST'], endpoint='new_item')
-@app.route('/item/<int:id>/edit', methods=['GET', 'POST'], endpoint='edit_item')
+@app.route(
+    '/item/new',
+    methods=['GET', 'POST'],
+    endpoint='new_item')
+@app.route(
+    '/item/<int:id>/edit',
+    methods=['GET', 'POST'],
+    endpoint='edit_item'
+)
 def get_edit_item_page(id=0):
 
     if request.method == 'GET':
@@ -136,7 +149,8 @@ def get_edit_item_page(id=0):
             if item is None:
                 return render_template('404.html')
             else:
-                if (not auth.is_user_admin()) and (item.user_id != auth.get_user_id()):
+                if (not auth.is_user_admin() and
+                        item.user_id != auth.get_user_id()):
                     # Cannot edit item that does not belong to user
                     # But admins are allowed
                     return render_template('unauthorized.html')
@@ -159,30 +173,61 @@ def get_edit_item_page(id=0):
         if id and id != 0:
             # Update item
             item = db_utils.get_item(id)
-            if (not auth.is_user_admin()) and (item.user_id != auth.get_user_id()):
+            if (not auth.is_user_admin() and
+                    item.user_id != auth.get_user_id()):
                 # Only item owners and admins allowed to update item
                 return response.error('Unauthorized')
 
-            if request.form['name'] and request.form['desc'] and request.form['cat-id']:
+            if (request.form['name'] and
+                    request.form['desc'] and
+                    request.form['cat-id']):
                 item = db_utils.update_item(
-                    request.form['item-id'], request.form['name'], request.form['desc'], request.form['cat-id'])
-                itemData = {'id': item.id, 'name': item.name, 'desc': item.desc,
-                            'short_desc': item.short_desc, 'category_id': item.category_id}
-                return response.success(url_for('get_item_page', id=itemData['id']), itemData)
+                                    request.form['item-id'],
+                                    request.form['name'],
+                                    request.form['desc'],
+                                    request.form['cat-id']
+                                )
+                itemData = {
+                            'id': item.id,
+                            'name': item.name,
+                            'desc': item.desc,
+                            'short_desc': item.short_desc,
+                            'category_id': item.category_id
+                            }
+                return response.success(
+                                        url_for(
+                                            'get_item_page',
+                                            id=itemData['id']
+                                        ),
+                                        itemData
+                                    )
             else:
                 return response.error('Failed to save')
         else:
             # Create new item
-            if request.form['name'] and request.form['desc'] and request.form['cat-id']:
+            if (request.form['name'] and
+                    request.form['desc'] and
+                    request.form['cat-id']):
                 item = db_utils.add_item(
                     request.form['name'],
                     request.form['desc'],
                     request.form['cat-id'],
                     auth.get_user_id()
                 )
-                itemData = {'id': item.id, 'name': item.name, 'desc': item.desc,
-                            'short_desc': item.short_desc, 'category_id': item.category_id}
-                return response.success(url_for('get_item_page', id=itemData['id']), itemData)
+                itemData = {
+                            'id': item.id,
+                            'name': item.name,
+                            'desc': item.desc,
+                            'short_desc': item.short_desc,
+                            'category_id': item.category_id
+                            }
+                return response.success(
+                                        url_for(
+                                                'get_item_page',
+                                                id=itemData['id']
+                                        ),
+                                        itemData
+                                    )
             else:
                 return response.error('Failed to save')
 
@@ -195,7 +240,12 @@ def get_item_page(id):
     if item is None:
         return render_template('404.html')
     item.nice_date = '{month} {day}, {year}'.format(
-        month=calendar.month_name[item.created_at.month], day=item.created_at.day, year=item.created_at.year)
+                        month=calendar.month_name[
+                            item.created_at.month
+                        ],
+                        day=item.created_at.day,
+                        year=item.created_at.year
+                    )
     signed_in = auth.is_signed_in()
     is_user_admin = False
     is_item_owner = False
@@ -242,7 +292,10 @@ def get_my_items_page(user_id=0):
     items = db_utils.get_user_items(user_id if user_id else auth.get_user_id())
     for item in items:
         item.nice_date = '{month} {day}, {year}'.format(
-            month=calendar.month_name[item.created_at.month], day=item.created_at.day, year=item.created_at.year)
+            month=calendar.month_name[item.created_at.month],
+            day=item.created_at.day,
+            year=item.created_at.year
+        )
     signed_in = auth.is_signed_in()
     is_user_admin = False
     if signed_in:
@@ -273,7 +326,10 @@ def post_delete_item(id):
 
 @app.route('/login')
 def get_login_page():
-    return render_template('login.html', CLIENT_ID=CLIENT_ID, SIGNIN_REQUEST_TOKEN=auth.get_signin_request_token())
+    return render_template(
+                'login.html',
+                CLIENT_ID=CLIENT_ID,
+                SIGNIN_REQUEST_TOKEN=auth.get_signin_request_token())
 
 
 @app.route('/signin', methods=['POST'])
@@ -281,14 +337,16 @@ def do_sign_in():
     # This is meant to be reached from AJAX request.
     # We return a JSON response that will be used by
     # The JS code making the request.
-    if request.form['signin_request_token'] != login_session['signin_request_token']:
+    if (request.form['signin_request_token'] !=
+            login_session['signin_request_token']):
         return response.error('Invalid token.')
 
     g_id_token = request.form['id_token']
     try:
         idinfo = id_token.verify_oauth2_token(
             g_id_token, requests.Request(), CLIENT_ID)
-        if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+        if (idinfo['iss'] not in
+                ['accounts.google.com', 'https://accounts.google.com']):
             raise ValueError('Wrong issuer.')
 
         if idinfo['aud'] != CLIENT_ID:
@@ -323,6 +381,47 @@ def do_sign_in():
 def do_sign_out():
     login_session.clear()
     return response.success()
+
+
+# JSON endpoints
+@app.route('/items.json')
+def get_all_items_json():
+    items = db_utils.get_items(0)
+    item_list = []
+    for item in items:
+        item_list.append({
+            'id': item.id,
+            'name': item.name,
+            'created_at': item.created_at,
+            'updated_at': item.updated_at,
+            'category_id': item.category_id,
+            'category_name': item.category.name,
+            'user_id': item.user_id,
+            'short_desc': item.short_desc,
+            'desc': item.desc
+        })
+    return jsonify(item_list), 200
+
+
+@app.route('/item.json')
+def get_item_json():
+    id = request.args.get('id')
+    if not id:
+        return response.error('Item id not specified.')
+
+    item = db_utils.get_item(id)
+    item_dict = {
+        'id': item.id,
+        'name': item.name,
+        'created_at': item.created_at,
+        'updated_at': item.updated_at,
+        'category_id': item.category_id,
+        'category_name': item.category.name,
+        'user_id': item.user_id,
+        'short_desc': item.short_desc,
+        'desc': item.desc
+    }
+    return jsonify(item_dict), 200
 
 
 if __name__ == '__main__':

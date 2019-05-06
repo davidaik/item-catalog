@@ -4,12 +4,16 @@
 
 from flask import jsonify
 
+
 def success(redirect_url='/', item_data={}):
     response = {}
     response['error'] = False
     response['redirect_url'] = redirect_url
-    response['item_data'] = item_data  # Contains data of item updated/added to the db
+
+    # Include the item that was just updated
+    response['item_data'] = item_data
     return jsonify(response), 200
+
 
 def error(message):
     response = {}

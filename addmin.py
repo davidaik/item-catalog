@@ -56,7 +56,11 @@ def promptAndAddNewAdmin():
 def promptRemoveOrAddAdmin():
     printAdmins(admins)
     user_input = input(
-        'Enter an admin number to remove it, or enter \'n\' to add a new admin: ')
+                    '{}{}'.format(
+                                    'Enter an admin number to remove it, ',
+                                    'or enter \'n\' to add a new admin: '
+                            )
+                )
     if user_input == 'n':
         promptAndAddNewAdmin()
     else:
