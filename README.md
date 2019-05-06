@@ -112,6 +112,7 @@ If you have used your own role name, password or database name, you will need to
     'postgresql+psycopg2://catuser:catalog@localhost/catalog'
 
 The syntax for this line is
+
     'postgresql+psycopg2://role_name:role_password@localhost/databse_name'
 
 
