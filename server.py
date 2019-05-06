@@ -203,6 +203,42 @@ def get_item_page(id):
     )
 
 
+@app.route('/myitems')
+def get_my_items_page():
+    if not auth.is_signed_in():
+        # Redirect to login page.
+        # The url to which we are redirected will contain a paramenter
+        # which will be the url to redirect back to
+        # after logging in
+        redirect_parameter = 'redirect={}'.format(url_for('get_my_items_page'))
+        url = '{path}?{parameter}'.format(
+            path=url_for('get_login_page'),
+            parameter=redirect_parameter
+        )
+        return redirect(url, 302)
+
+    categories = db_utils.get_categories()
+    items = db_utils.get_user_items(auth.get_user_id())
+    for item in items:
+        item.nice_date = '{month} {day}, {year}'.format(
+            month=calendar.month_name[item.created_at.month], day=item.created_at.day, year=item.created_at.year)
+    signed_in = auth.is_signed_in()
+    is_user_admin = False
+    if signed_in:
+        is_user_admin = auth.is_user_admin(login_session.get('email'))
+    return render_template(
+        'index.html',
+        categories=categories,
+        items=items,
+        CLIENT_ID=CLIENT_ID,
+        signed_in=signed_in,
+        is_user_admin=is_user_admin,
+        user_name=auth.get_user_name(),
+        picture=auth.get_user_picture(),
+        SIGNIN_REQUEST_TOKEN=auth.get_signin_request_token()
+    )
+
+
 @app.route('/delete/item/<int:id>', methods=['POST'])
 def post_delete_item(id):
     # This is meant to be reached from AJAX request.

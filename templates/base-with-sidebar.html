@@ -3,7 +3,7 @@
 <div id="main">
     <ul id="categories">
         <h2>Categories</h2>
-        <li><a href="">My Items</a></li>
+        <li><a href="{{ url_for('get_my_items_page') }}">My Items</a></li>
 
         {% for category in categories %}
         <li class="cat-item">

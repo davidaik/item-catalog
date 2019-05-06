@@ -75,6 +75,9 @@ def get_items(categoryId):
         return session.query(Item).order_by(desc(Item.created_at)).all()
     return session.query(Item).filter_by(category_id=categoryId).order_by(desc(Item.created_at)).all()
 
+def get_user_items(user_id):
+    return session.query(Item).filter_by(user_id=user_id).order_by(desc(Item.created_at)).all()
+
 def get_item(id):
     return session.query(Item).filter_by(id=id).first()
 
