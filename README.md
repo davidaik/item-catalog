@@ -13,6 +13,9 @@ This is a web application built on the Python Flask framework that allows users 
 7. Admin users are allowed to update and delete any item of any user.
 
 
+Uses Bootstrap for some components.
+
+
 ## Setting up
 
 Download the file named `Vagrantfile`, available in this repository, into a directory.
