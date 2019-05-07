@@ -4,7 +4,7 @@ This is a web application built on the Python Flask framework that allows users 
 
 ## Live Demo
 
-A live demo is hosted on Heroku. Check it out [here](https://david-flask-catalog.herokuapp.com/)
+A live demo is hosted on Heroku. Check it out [here](https://david-flask-catalog.herokuapp.com/).
 
 
 ## Features
