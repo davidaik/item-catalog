@@ -21,12 +21,12 @@ Uses Bootstrap for some components.
 
 ## Screenshots
 
-![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/home-1.png?raw=true)
-![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/signin.png?raw=true)
-![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/add-category.png?raw=true)
-![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/new-item-page.png?raw=true)
-![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/home-items.png?raw=true)
-![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/item-page.png?raw=true)
+![home page - brand new](https://github.com/davidaik/item-catalog/blob/master/screenshots/home-1.png?raw=true)
+![sign in page](https://github.com/davidaik/item-catalog/blob/master/screenshots/signin.png?raw=true)
+![new category page](https://github.com/davidaik/item-catalog/blob/master/screenshots/add-category.png?raw=true)
+![new item page](https://github.com/davidaik/item-catalog/blob/master/screenshots/new-item-page.png?raw=true)
+![home page with items](https://github.com/davidaik/item-catalog/blob/master/screenshots/home-items.png?raw=true)
+![item page](https://github.com/davidaik/item-catalog/blob/master/screenshots/item-page.png?raw=true)
 
 
 ## Setting up
@@ -159,9 +159,9 @@ Once we have an admin user, we can start the server.
 
 Once the server is running, we can visit the home page at http://localhost:8000
 
-![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/addmin.png?raw=true)
-![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/addmin-done.png?raw=true)
-![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/server-py.png?raw=true)
+![addmin.py](https://github.com/davidaik/item-catalog/blob/master/screenshots/addmin.png?raw=true)
+![addmin.py done](https://github.com/davidaik/item-catalog/blob/master/screenshots/addmin-done.png?raw=true)
+![server.py](https://github.com/davidaik/item-catalog/blob/master/screenshots/server-py.png?raw=true)
 
 
 ## JSON endpoints
@@ -172,12 +172,15 @@ The app has two json endpoints
 
 This gives us all items in the database in JSON format.
 
+![All items JSON endpoint](https://github.com/davidaik/item-catalog/blob/master/screenshots/items-json.png?raw=true)
+
 The other endpoint gives data of an item in JSON format.
 
     http://localhost:8000/item.json?id=ITEM_ID
 
 Here, ITEM_ID could be any integer but it should exist in the database.
 
+![Item JSON endpoint](https://github.com/davidaik/item-catalog/blob/master/screenshots/item-json.png?raw=true)
 
 ## License
 > MIT License
