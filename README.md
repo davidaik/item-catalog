@@ -26,7 +26,7 @@ Uses Bootstrap for some components.
 ![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/add-category.png?raw=true)
 ![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/new-item-page.png?raw=true)
 ![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/home-items.png?raw=true)
-![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/items-page.png?raw=true)
+![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/item-page.png?raw=true)
 
 
 ## Setting up
