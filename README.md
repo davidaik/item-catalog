@@ -2,6 +2,11 @@
 
 This is a web application built on the Python Flask framework that allows users to add items under categories. Categories are managed by admin users.
 
+## Live Demo
+
+A live demo is hosted on Heroku. Check it out [here](https://david-flask-catalog.herokuapp.com/)
+
+
 ## Features
 
 ![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/home-items.png?raw=true)
