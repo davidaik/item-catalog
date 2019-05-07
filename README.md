@@ -19,6 +19,17 @@ This is a web application built on the Python Flask framework that allows users 
 Uses Bootstrap for some components.
 
 
+## Screenshots
+
+![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/home-1.png?raw=true)
+![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/signin.png?raw=true)
+![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/home-2-signedin.png?raw=true)
+![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/add-category.png?raw=true)
+![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/new-item-page.png?raw=true)
+![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/home-items.png?raw=true)
+![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/items-page.png?raw=true)
+
+
 ## Setting up
 
 Download the file named `Vagrantfile`, available in this repository, into a directory.
@@ -147,7 +158,12 @@ Once we have an admin user, we can start the server.
 
     python3 server.py
 
-Once the server is running, we can connect to the home page at http://localhost:8000
+Once the server is running, we can visit the home page at http://localhost:8000
+
+![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/addmin.png?raw=true)
+![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/addmin-done.png?raw=true)
+![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/server-py.png?raw=true)
+
 
 ## JSON endpoints
 
