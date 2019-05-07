@@ -4,6 +4,9 @@ This is a web application built on the Python Flask framework that allows users 
 
 ## Features
 
+![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/home-items.png?raw=true)
+
+
 1. Sign in with Google account.
 2. Users can add items under different categories.
 3. Users can update and delete their own items.
