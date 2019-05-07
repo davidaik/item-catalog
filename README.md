@@ -23,7 +23,6 @@ Uses Bootstrap for some components.
 
 ![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/home-1.png?raw=true)
 ![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/signin.png?raw=true)
-![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/home-2-signedin.png?raw=true)
 ![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/add-category.png?raw=true)
 ![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/new-item-page.png?raw=true)
 ![alt text](https://github.com/davidaik/item-catalog/blob/master/screenshots/home-items.png?raw=true)
